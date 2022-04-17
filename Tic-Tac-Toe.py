@@ -7,9 +7,6 @@ def main():
         "3,1": " ", "3,2": " ", "3,3": " ",
     }
 
-    print("welcome! Here is your board!" + "\n" +
-          "Please enter your moves as row,column with no spaces!")
-
     gamePlayLoop(gameBoard)
 
 
@@ -27,34 +24,38 @@ def printBoard(board):
 
 def playerOne(gameBoard):
     printBoard(gameBoard)
-    playerOneMove = input(
-        "\nPlayer One (X) where would you like to place an 'X'?")
+    movePlaced = False
+    while movePlaced == False:
+        playerOneMove = input(
+            "\nPlayer One (X) where would you like to place an 'X'?")
 
-    # for key in gameBoard:
-    # if gameBoard[key] != " ":
-    #     playerOneMove = input(
-    #         "There has already been a move there, please select a different spot!")
-    # elif playerOneMove not in gameBoard:
-    #     playerOneMove = input(
-    #         "That is not a valid spot, please select a different spot!")
-    # else:
-    gameBoard[playerOneMove] = "X"
+        if playerOneMove not in gameBoard:
+            print(
+                "That is not a valid spot, please select a different spot!")
+        elif gameBoard[playerOneMove] != " ":
+            print(
+                "There has already been a move there, please select a different spot!")
+        else:
+            gameBoard[playerOneMove] = "X"
+            movePlaced = True
 
 
 def playerTwo(gameBoard):
     printBoard(gameBoard)
-    playerTwoMove = input(
-        "\nPlayer Two (O) where would you like to place an 'O'?")
+    movePlaced = False
+    while movePlaced == False:
+        playerTwoMove = input(
+            "\nPlayer Two (O) where would you like to place an 'O'?")
 
-    # for key in gameBoard:
-    # if gameBoard[key] != " ":
-    #     playerTwoMove = input(
-    #         "There has already been a move there, please select a different spot!")
-    # elif playerTwoMove not in gameBoard:
-    #     playerTwoMove = input(
-    #         "That is not a valid spot, please select a different spot!")
-    # else:
-    gameBoard[playerTwoMove] = "O"
+        if playerTwoMove not in gameBoard:
+            print(
+                "That is not a valid spot, please select a different spot!")
+        elif gameBoard[playerTwoMove] != " ":
+            print(
+                "There has already been a move there, please select a different spot!")
+        else:
+            gameBoard[playerTwoMove] = "O"
+            movePlaced = True
 
 
 def checkEndState(gameBoard):
@@ -67,55 +68,57 @@ def checkEndState(gameBoard):
     for key in gameBoard:
         if "X" in gameBoard[key]:
             playerOneSpots.append(key)
-            if winningCombos in playerOneSpots:
-                print("Player One Wins!")
-                win = input("Would you like to play again? y/n")
-                win = win.lower()
-                if win == "y":
-                    main()
-                else:
-                    break
+            for combo in winningCombos:
+                if all(elem in playerOneSpots for elem in combo) and len(playerOneSpots) >= 3:
+                    print("Player One Wins!")
+                    endGamePrompt()
+
         else:
             if "O" in gameBoard[key]:
                 playerTwoSpots.append(key)
-                if playerTwoSpots in winningCombos:
-                    print("Player Two Wins!")
-                    win = input("Would you like to play again? y/n")
-                    win = win.lower()
-                    if win == "y":
-                        main()
-                    else:
-                        break
+                for combo in winningCombos:
+                    if all(elem in playerTwoSpots for elem in combo) and len(playerTwoSpots) >= 3:
+                        print("Player Two Wins!")
+                        endGamePrompt()
+
+    if len(playerOneSpots) == 5 and len(playerTwoSpots) == 4:
+        while True:
+            answer = input(
+                "This game is a draw, would you like to play again? y/n")
+            answer = answer.lower()
+            if answer == "y":
+                main()
+            elif answer == "n":
+                exit()
+            else:
+                print("Please enter either 'y' or 'n'")
+
+
+def endGamePrompt():
+    while True:
+        answer = input("Would you like to play again? y/n")
+        answer = answer.lower()
+        if answer == "y":
+            main()
+        elif answer == "n":
+            exit()
+        else:
+            print("Please enter either 'y' or 'n'")
 
 
 def gamePlayLoop(gameBoard):
+    print("welcome! Here is your board!" + "\n" +
+          "Please enter your moves as row,column with no spaces!")
     turnCounter = 0
-    while turnCounter < 5:
+    while turnCounter <= 10:
+        checkEndState(gameBoard)
         playerOne(gameBoard)
+        checkEndState(gameBoard)
         turnCounter += 1
+        checkEndState(gameBoard)
         playerTwo(gameBoard)
+        checkEndState(gameBoard)
         turnCounter += 1
-        if turnCounter >= 5:
-            playerOne(gameBoard)
-            checkEndState(gameBoard)
-            turnCounter += 1
-            playerTwo(gameBoard)
-            checkEndState(gameBoard)
-            turnCounter += 1
-        if turnCounter > 9:
-            draw = input(
-                "This game is a draw, would you like to play again? y/n")
-            draw = draw.lower()
-            if draw == "y":
-                main()
-            else:
-                break
-
-    # counter2 = 0
-    # while counter2 < 100:
-    #     playerOne(gameBoard)
-    #     playerTwo(gameBoard)
-    #     counter2 += 1
 
 
 if __name__ == "__main__":
